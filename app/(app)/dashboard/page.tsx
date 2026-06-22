@@ -134,7 +134,9 @@ export default function DashboardPage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
             <h3 className="font-semibold text-zinc-800 mb-4">Faturamento por Categoria</h3>
             {faturamento.loading ? (
-              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg flex items-center justify-center">
+                <p className="text-zinc-400 text-sm">Carregando...</p>
+              </div>
             ) : pieData.length > 0 ? (
               <PieChart data={pieData} formatValue={formatBRL} height={260} />
             ) : (
@@ -145,7 +147,9 @@ export default function DashboardPage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
             <h3 className="font-semibold text-zinc-800 mb-4">Faturamento por Unidade</h3>
             {crescimento.loading ? (
-              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg flex items-center justify-center">
+                <p className="text-zinc-400 text-sm">Carregando...</p>
+              </div>
             ) : barData.length > 0 ? (
               <BarChart
                 data={barData}

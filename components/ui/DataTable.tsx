@@ -75,6 +75,11 @@ export function DataTable<T extends Record<string, any>>({
                 ))}
               </tr>
             ))}
+            <tr className="border-t border-zinc-100">
+              <td colSpan={columns.length} className="px-4 py-3 text-center text-xs text-zinc-400">
+                Carregando dados...
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

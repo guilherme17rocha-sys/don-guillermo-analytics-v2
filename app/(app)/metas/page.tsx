@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { Header } from '@/components/layout/Header'
-import { ErrorMessage } from '@/components/ui/ErrorMessage'
 import { useAvecData } from '@/hooks/useAvecData'
 import { usePeriodo } from '@/hooks/usePeriodo'
 import { useUnidades } from '@/hooks/useUnidades'
@@ -95,10 +94,6 @@ export default function MetasPage() {
   }), [faturamento.data, atendimentos.data, novosClientes.data, ticketMedio.data])
 
   const isAdmin = profile?.role === 'admin'
-
-  const unidadesFiltradas = unidadeSelecionada !== 'all'
-    ? unidades.filter(u => u.id === unidadeSelecionada)
-    : unidades
 
   const metaKey = unidadeSelecionada !== 'all' ? unidadeSelecionada : 'geral'
   const metaAtual = metas[metaKey] || {}

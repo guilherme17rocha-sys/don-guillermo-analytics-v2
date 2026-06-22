@@ -10,7 +10,7 @@ import { BarChart } from '@/components/charts/BarChart'
 import { useAvecData } from '@/hooks/useAvecData'
 import { usePeriodo } from '@/hooks/usePeriodo'
 import { useUnidades } from '@/hooks/useUnidades'
-import { Tag, Package, Star, MapPin } from 'lucide-react'
+import { Tag, Package, Star } from 'lucide-react'
 
 export default function PromocoesPage() {
   const { periodo } = usePeriodo()
@@ -74,7 +74,9 @@ export default function PromocoesPage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
             <h3 className="font-semibold text-zinc-800 mb-4">Taxa de Adesão por Unidade</h3>
             {taxaAdesao.loading ? (
-              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg flex items-center justify-center">
+                <p className="text-zinc-400 text-sm">Carregando...</p>
+              </div>
             ) : barAdesao.length > 0 ? (
               <BarChart
                 data={barAdesao}
@@ -92,7 +94,9 @@ export default function PromocoesPage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
             <h3 className="font-semibold text-zinc-800 mb-4">Origem das Reservas</h3>
             {origemReservas.loading ? (
-              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg flex items-center justify-center">
+                <p className="text-zinc-400 text-sm">Carregando...</p>
+              </div>
             ) : pieOrigens.length > 0 ? (
               <PieChart data={pieOrigens} height={260} />
             ) : (

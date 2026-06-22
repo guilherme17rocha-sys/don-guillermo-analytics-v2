@@ -21,10 +21,12 @@ const colorMap = {
 export function MetricCard({ title, value, subtitle, icon: Icon, trend, color = 'amber', loading }: MetricCardProps) {
   if (loading) {
     return (
-      <div className="bg-white border border-zinc-200 rounded-xl p-5 animate-pulse">
-        <div className="h-4 bg-zinc-200 rounded w-3/4 mb-3" />
-        <div className="h-8 bg-zinc-200 rounded w-1/2 mb-2" />
-        <div className="h-3 bg-zinc-200 rounded w-1/3" />
+      <div className="bg-white border border-zinc-200 rounded-xl p-5">
+        <div className="h-4 bg-zinc-200 rounded w-3/4 mb-3 animate-pulse" />
+        <div className="flex items-center gap-2 mb-2">
+          <div className="h-8 bg-zinc-200 rounded w-1/2 animate-pulse" />
+        </div>
+        <p className="text-xs text-zinc-400">Carregando...</p>
       </div>
     )
   }

@@ -32,8 +32,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (loading || !user || !profile || profile.status !== 'approved') {
     return (
-      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-900 flex flex-col items-center justify-center gap-3">
         <div className="w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+        <p className="text-zinc-400 text-sm">Carregando...</p>
       </div>
     )
   }

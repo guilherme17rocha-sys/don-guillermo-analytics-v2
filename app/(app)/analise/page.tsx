@@ -71,7 +71,9 @@ export default function AnalisePage() {
             <div className="bg-white border border-zinc-200 rounded-xl p-5">
               <h3 className="font-semibold text-zinc-800 mb-4">Faturamento por Categoria</h3>
               {faturCat.loading ? (
-                <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+                <div className="h-64 bg-zinc-50 animate-pulse rounded-lg flex items-center justify-center">
+                  <p className="text-zinc-400 text-sm">Carregando...</p>
+                </div>
               ) : barDataServicos.length > 0 ? (
                 <BarChart data={barDataServicos} bars={[{ key: 'valor', label: 'Valor' }]} xKey="categoria" formatValue={formatBRL} height={280} />
               ) : (

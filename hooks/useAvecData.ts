@@ -36,7 +36,7 @@ export function useAvecData<T = any>({ reportId, params, enabled = true }: UseAv
 
       if (!res.ok) {
         const err = await res.json()
-        throw new Error(err.error || 'Erro ao buscar dados')
+        throw new Error(err.error || 'Erro ao carregar dados')
       }
 
       const json = await res.json()

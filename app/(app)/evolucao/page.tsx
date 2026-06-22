@@ -13,6 +13,14 @@ function formatBRL(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0)
 }
 
+function ChartSkeleton() {
+  return (
+    <div className="h-64 bg-zinc-50 animate-pulse rounded-lg flex items-center justify-center">
+      <p className="text-zinc-400 text-sm">Carregando...</p>
+    </div>
+  )
+}
+
 export default function EvolucaoPage() {
   const { periodo } = usePeriodo()
   const { unidadeSelecionada } = useUnidades()
@@ -24,7 +32,6 @@ export default function EvolucaoPage() {
   }), [periodo, unidadeSelecionada])
 
   const crescimentoUnidade = useAvecData({ reportId: 2011, params })
-  const crescimentoMarca = useAvecData({ reportId: 2012, params })
   const taxaAtivPeriodo = useAvecData({ reportId: 2003, params })
   const taxaAtivGeral = useAvecData({ reportId: 2004, params })
   const retornoGeral = useAvecData({ reportId: 1035, params })
@@ -36,7 +43,6 @@ export default function EvolucaoPage() {
     crescimentoUnidade.data.slice(0, 12).map((r, i) => ({
       periodo: r.mes || r.periodo || r.data || `M${i + 1}`,
       faturamento: parseFloat(r.faturamento || r.valor || 0),
-      crescimento: parseFloat(r.crescimento_percentual || r.crescimento || 0),
     })),
     [crescimentoUnidade.data])
 
@@ -76,7 +82,7 @@ export default function EvolucaoPage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
             <h3 className="font-semibold text-zinc-800 mb-4">Crescimento de Faturamento por Unidade</h3>
             {crescimentoUnidade.loading ? (
-              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+              <ChartSkeleton />
             ) : faturLineData.length > 0 ? (
               <LineChart
                 data={faturLineData}
@@ -93,7 +99,7 @@ export default function EvolucaoPage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
             <h3 className="font-semibold text-zinc-800 mb-4">Taxa de Ativação</h3>
             {taxaAtivPeriodo.loading ? (
-              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+              <ChartSkeleton />
             ) : ativLineData.length > 0 ? (
               <LineChart
                 data={ativLineData}
@@ -113,7 +119,7 @@ export default function EvolucaoPage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
             <h3 className="font-semibold text-zinc-800 mb-4">Retorno ao Longo do Tempo</h3>
             {retornoGeral.loading ? (
-              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+              <ChartSkeleton />
             ) : retornoLineData.length > 0 ? (
               <BarChart
                 data={retornoLineData}
@@ -133,7 +139,7 @@ export default function EvolucaoPage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
             <h3 className="font-semibold text-zinc-800 mb-4">Atendimentos e Novos Clientes</h3>
             {atendimentos.loading ? (
-              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+              <ChartSkeleton />
             ) : atendLineData.length > 0 ? (
               <LineChart
                 data={atendLineData}

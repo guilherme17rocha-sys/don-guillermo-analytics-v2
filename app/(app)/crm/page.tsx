@@ -5,16 +5,11 @@ import { Header } from '@/components/layout/Header'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { DataTable } from '@/components/ui/DataTable'
 import { ErrorMessage } from '@/components/ui/ErrorMessage'
-import { Badge } from '@/components/ui/Badge'
 import { LineChart } from '@/components/charts/LineChart'
 import { useAvecData } from '@/hooks/useAvecData'
 import { usePeriodo } from '@/hooks/usePeriodo'
 import { useUnidades } from '@/hooks/useUnidades'
 import { Users, UserPlus, UserCheck, Percent, AlertTriangle, Download } from 'lucide-react'
-
-function formatBRL(v: number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0)
-}
 
 const TABS = ['Base de Clientes', 'Novos Clientes', 'Retorno', 'Contatos', 'Duplicados']
 

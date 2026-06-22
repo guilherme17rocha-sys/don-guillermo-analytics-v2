@@ -34,7 +34,7 @@ export default function AdminPage() {
       return
     }
     loadUsers()
-  }, [profile])
+  }, [profile, router])
 
   async function loadUsers() {
     setLoading(true)

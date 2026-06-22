@@ -84,7 +84,9 @@ export default function FinanceiroPage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
             <h3 className="font-semibold text-zinc-800 mb-4">Faturamento por Categoria</h3>
             {faturamento.loading ? (
-              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg flex items-center justify-center">
+                <p className="text-zinc-400 text-sm">Carregando...</p>
+              </div>
             ) : pieFaturamento.length > 0 ? (
               <PieChart data={pieFaturamento} formatValue={formatBRL} height={260} />
             ) : (
@@ -95,7 +97,9 @@ export default function FinanceiroPage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
             <h3 className="font-semibold text-zinc-800 mb-4">Despesas por Categoria</h3>
             {despesas.loading ? (
-              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg" />
+              <div className="h-64 bg-zinc-50 animate-pulse rounded-lg flex items-center justify-center">
+                <p className="text-zinc-400 text-sm">Carregando...</p>
+              </div>
             ) : barDespesas.length > 0 ? (
               <BarChart data={barDespesas} bars={[{ key: 'valor', label: 'Valor', color: '#f43f5e' }]} xKey="categoria" formatValue={formatBRL} height={260} />
             ) : (

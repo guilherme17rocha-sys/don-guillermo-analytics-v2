@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/Header'
 import { useAvecData } from '@/hooks/useAvecData'
 import { usePeriodo } from '@/hooks/usePeriodo'
 import { useUnidades } from '@/hooks/useUnidades'
-import { Building2, ArrowRight, DollarSign, Users, TrendingUp, UserPlus } from 'lucide-react'
+import { Building2, ArrowRight } from 'lucide-react'
 
 function formatBRL(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0)
