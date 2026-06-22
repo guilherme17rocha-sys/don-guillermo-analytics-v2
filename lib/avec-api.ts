@@ -19,18 +19,6 @@ function buildCacheKey(reportId: number, params: AvecParams): string {
   return `cache/${reportId}/${periodo}/${unidade}`
 }
 
-async function getCached(cacheKey: string): Promise<any[] | null> {
-  try {
-    const snap = await getDoc(doc(db, ...cacheKey.split('/') as [string, string]))
-    if (!snap.exists()) return null
-    const data = snap.data()
-    if (!data?.expiresAt || Date.now() > data.expiresAt) return null
-    return data.result
-  } catch {
-    return null
-  }
-}
-
 async function setCache(cacheKey: string, result: any[]): Promise<void> {
   try {
     const parts = cacheKey.split('/')
@@ -83,20 +71,11 @@ async function fetchPage(
 
 export async function fetchReport(
   reportId: number,
-  params: Omit<AvecParams, 'page'>
+  params: Omit<AvecParams, 'page'>,
+  tokenOverride?: string
 ): Promise<any[]> {
+  const token = tokenOverride || await getToken()
   const fullParams = params as AvecParams
-  const cacheKey = buildCacheKey(reportId, fullParams)
-
-  let cached: any[] | null = null
-  try {
-    cached = await getCached(cacheKey)
-  } catch {
-    // Firestore permission error — skip cache, fetch directly
-  }
-  if (cached) return cached
-
-  const token = await getToken()
   const allResults: any[] = []
   let page = 1
   let hasMore = true
@@ -114,9 +93,10 @@ export async function fetchReport(
   }
 
   try {
+    const cacheKey = buildCacheKey(reportId, fullParams)
     await setCache(cacheKey, allResults)
   } catch {
-    // Firestore permission error — skip cache write
+    // Firestore permission error — ignore, data already fetched
   }
   return allResults
 }
