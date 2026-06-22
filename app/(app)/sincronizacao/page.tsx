@@ -50,16 +50,27 @@ export default function SincronizacaoPage() {
     setStatus('idle')
     setUnidades([])
     try {
-      const res = await fetch('/api/avec/test')
-      const json = await res.json()
-      if (json.success) {
-        setStatus('success')
-        setStatusMsg(`Conexão OK! ${json.unidades?.length || 0} unidade(s) encontrada(s).`)
-        setUnidades(json.unidades || [])
-      } else {
-        setStatus('error')
-        setStatusMsg(json.error || 'Falha na conexão')
+      const today = new Date()
+      const inicio = `01/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`
+      const fim = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`
+      const url = `https://api.avec.beauty/reports/2052?inicio=${inicio}&fim=${fim}&limit=250`
+      const res = await fetch(url, {
+        headers: {
+          Authorization: savedToken,
+          'Content-Type': 'application/json',
+        },
+      })
+      if (res.status === 401 || res.status === 403) {
+        throw new Error('Token AVEC inválido ou expirado. Atualize o token.')
       }
+      if (!res.ok) {
+        throw new Error(`Erro na API AVEC (${res.status}): ${res.statusText}`)
+      }
+      const json = await res.json()
+      const unidadesResult = json?.Data?.Result || []
+      setStatus('success')
+      setStatusMsg(`Conexão OK! ${unidadesResult.length} unidade(s) encontrada(s).`)
+      setUnidades(unidadesResult)
     } catch (err: any) {
       setStatus('error')
       setStatusMsg(err.message)
