@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -37,9 +38,15 @@ export function Sidebar() {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-zinc-900 text-white w-64">
-      <div className="p-6 border-b border-zinc-700">
-        <h1 className="text-xl font-bold text-amber-400">Don Guillermo</h1>
-        <p className="text-xs text-zinc-400 mt-1">Analytics V2</p>
+      <div className="p-4 border-b border-zinc-700 flex items-center justify-center">
+        <Image
+          src="/logo-don-guillermo.png"
+          alt="Don Guillermo"
+          height={60}
+          width={180}
+          style={{ height: 60, width: 'auto' }}
+          priority
+        />
       </div>
 
       <nav className="flex-1 py-4 overflow-y-auto">
