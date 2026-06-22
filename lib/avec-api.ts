@@ -87,7 +87,13 @@ export async function fetchReport(
 ): Promise<any[]> {
   const fullParams = params as AvecParams
   const cacheKey = buildCacheKey(reportId, fullParams)
-  const cached = await getCached(cacheKey)
+
+  let cached: any[] | null = null
+  try {
+    cached = await getCached(cacheKey)
+  } catch {
+    // Firestore permission error — skip cache, fetch directly
+  }
   if (cached) return cached
 
   const token = await getToken()
@@ -107,7 +113,11 @@ export async function fetchReport(
     page++
   }
 
-  await setCache(cacheKey, allResults)
+  try {
+    await setCache(cacheKey, allResults)
+  } catch {
+    // Firestore permission error — skip cache write
+  }
   return allResults
 }
 

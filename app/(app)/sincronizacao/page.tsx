@@ -50,28 +50,38 @@ export default function SincronizacaoPage() {
     setStatus('idle')
     setTestResult([])
     try {
-      const today = new Date()
-      const inicio = `01/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`
-      const fim = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`
-      const url = `https://api.avec.beauty/reports/2005?inicio=${inicio}&fim=${fim}&limit=250`
+      const url = 'https://api.avec.beauty/reports/2005?page=1&limit=1&inicio=01/06/2025&fim=30/06/2025'
+      console.log('[AVEC Test] URL:', url)
+      console.log('[AVEC Test] Token:', savedToken ? `${savedToken.substring(0, 20)}...` : '(vazio)')
       const res = await fetch(url, {
         headers: {
           Authorization: savedToken,
           'Content-Type': 'application/json',
         },
       })
+      console.log('[AVEC Test] Status:', res.status, res.statusText)
+      const text = await res.text()
+      console.log('[AVEC Test] Resposta completa:', text)
+      let json: any
+      try {
+        json = JSON.parse(text)
+      } catch {
+        throw new Error(`Resposta não é JSON válido. Status: ${res.status}. Body: ${text.substring(0, 200)}`)
+      }
+      console.log('[AVEC Test] JSON parseado:', json)
       if (res.status === 401 || res.status === 403) {
         throw new Error('Token AVEC inválido ou expirado. Atualize o token.')
       }
       if (!res.ok) {
-        throw new Error(`Erro na API AVEC (${res.status}): ${res.statusText}`)
+        const apiError = json?.Message || json?.error || json?.message || text.substring(0, 200)
+        throw new Error(`Erro na API AVEC (${res.status}): ${apiError}`)
       }
-      const json = await res.json()
       const results = json?.Data?.Result || []
       setStatus('success')
-      setStatusMsg(`Conexão OK! ${results.length} registro(s) de atendimentos encontrado(s) no mês atual.`)
+      setStatusMsg(`Conexão OK! ${results.length} registro(s) de atendimentos encontrado(s).`)
       setTestResult(results)
     } catch (err: any) {
+      console.error('[AVEC Test] Erro:', err)
       setStatus('error')
       setStatusMsg(err.message)
     } finally {
