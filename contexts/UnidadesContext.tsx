@@ -61,8 +61,11 @@ export function UnidadesProvider({ children }: { children: ReactNode }) {
             })
             if (fallbackRes.ok) {
               const fallbackJson = await fallbackRes.json()
+              console.log('[Unidades] 2005 resposta completa:', JSON.stringify(fallbackJson, null, 2))
               const record = fallbackJson?.Data?.Result?.[0]
               if (record) {
+                console.log('[Unidades] 2005 Result[0] todos os campos:', JSON.stringify(record, null, 2))
+                console.log('[Unidades] 2005 Result[0] keys:', Object.keys(record))
                 const id = String(record.salao_id || record.salao_unidade_id || record.id || record.unidade_id || '')
                 const nome = record.salao || record.unidade || record.nome || 'Unidade SBC'
                 console.log(`[Unidades] Unidade descoberta via 2005: id=${id}, nome=${nome}`)

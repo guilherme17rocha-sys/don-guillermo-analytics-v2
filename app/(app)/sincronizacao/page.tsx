@@ -50,7 +50,11 @@ export default function SincronizacaoPage() {
     setStatus('idle')
     setTestResult([])
     try {
-      const url = 'https://api.avec.beauty/reports/2005?page=1&limit=1&inicio=01/06/2025&fim=30/06/2025'
+      const now = new Date()
+      const mesStr = String(now.getMonth() + 1).padStart(2, '0')
+      const anoStr = now.getFullYear()
+      const diaStr = String(now.getDate()).padStart(2, '0')
+      const url = `https://api.avec.beauty/reports/2005?page=1&limit=1&inicio=01/${mesStr}/${anoStr}&fim=${diaStr}/${mesStr}/${anoStr}`
       console.log('[AVEC Test] URL:', url)
       console.log('[AVEC Test] Token:', savedToken ? `${savedToken.substring(0, 20)}...` : '(vazio)')
       const res = await fetch(url, {
