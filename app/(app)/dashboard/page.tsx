@@ -18,13 +18,12 @@ function formatBRL(v: number) {
 
 export default function DashboardPage() {
   const { periodo } = usePeriodo()
-  const { unidadeSelecionada } = useUnidades()
+  useUnidades()
 
   const params = useMemo(() => ({
     inicio: periodo.inicio,
     fim: periodo.fim,
-    salao_unidade_id: unidadeSelecionada !== 'all' ? unidadeSelecionada : '23060',
-  }), [periodo, unidadeSelecionada])
+  }), [periodo])
 
   const crescimentoParams = useMemo(() => {
     const [, mesStr, anoStr] = periodo.inicio.split('/')
@@ -39,9 +38,8 @@ export default function DashboardPage() {
       fim1: `${String(lastDayPrev).padStart(2, '0')}/${String(prevMes).padStart(2, '0')}/${prevAno}`,
       inicio2: periodo.inicio,
       fim2: periodo.fim,
-      salao_unidade_id: unidadeSelecionada !== 'all' ? unidadeSelecionada : '23060',
     }
-  }, [periodo, unidadeSelecionada])
+  }, [periodo])
 
   const faturamento = useAvecData({ reportId: 1034, params })
   const atendimentos = useAvecData({ reportId: 2005, params })

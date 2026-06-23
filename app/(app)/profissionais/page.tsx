@@ -16,13 +16,12 @@ function formatBRL(v: number) {
 
 export default function ProfissionaisPage() {
   const { periodo } = usePeriodo()
-  const { unidadeSelecionada } = useUnidades()
+  useUnidades()
 
   const params = useMemo(() => ({
     inicio: periodo.inicio,
     fim: periodo.fim,
-    ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
-  }), [periodo, unidadeSelecionada])
+  }), [periodo])
 
   const profissionais = useAvecData({ reportId: 1229, params })
   const profissionais2 = useAvecData({ reportId: 2013, params })

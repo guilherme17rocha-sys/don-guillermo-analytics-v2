@@ -6,8 +6,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 
-const FALLBACK_UNIDADE: UnidadeOption = { id: '23060', nome: 'Shopping Metrópole - SBC' }
-
 interface UnidadesContextValue {
   unidades: UnidadeOption[]
   unidadeSelecionada: string
@@ -36,21 +34,20 @@ export function UnidadesProvider({ children }: { children: ReactNode }) {
           return
         }
 
-        let lista: UnidadeOption[] = []
-
         const res = await fetch('/api/avec/unidades', {
           headers: { Authorization: token },
         })
         console.log(`[Unidades] 2052 resposta: ${res.status}`)
 
+        let lista: UnidadeOption[] = []
+
         if (res.ok) {
           const json = await res.json()
           lista = json.data || []
-        }
-
-        if (lista.length === 0) {
-          console.log('[Unidades] 2052 falhou ou vazio, usando fallback 23060')
-          lista = [FALLBACK_UNIDADE]
+          console.log(`[Unidades] 2052 retornou ${lista.length} unidade(s):`, lista)
+        } else {
+          const errText = await res.text()
+          console.error(`[Unidades] 2052 erro: ${errText}`)
         }
 
         if (profile!.role !== 'admin' && profile!.unidades?.length) {
@@ -58,14 +55,8 @@ export function UnidadesProvider({ children }: { children: ReactNode }) {
         }
 
         setUnidades(lista)
-
-        if (lista.length === 1 && lista[0].id) {
-          setUnidadeSelecionada(lista[0].id)
-        }
       } catch (err: any) {
         console.error('[Unidades] Erro ao carregar:', err.message)
-        setUnidades([FALLBACK_UNIDADE])
-        setUnidadeSelecionada(FALLBACK_UNIDADE.id)
       } finally {
         setLoading(false)
       }

@@ -13,7 +13,7 @@ function formatBRL(v: number) {
 }
 
 function UnidadeCard({ unidade, params }: { unidade: { id: string; nome: string }; params: any }) {
-  const unidadeParams = { ...params, salao_unidade_id: unidade.id }
+  const unidadeParams = { ...params }
 
   const faturamento = useAvecData({ reportId: 1034, params: unidadeParams })
   const atendimentos = useAvecData({ reportId: 2005, params: unidadeParams })

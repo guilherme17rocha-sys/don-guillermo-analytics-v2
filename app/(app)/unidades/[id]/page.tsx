@@ -29,8 +29,7 @@ export default function UnidadeDetailPage() {
   const params = useMemo(() => ({
     inicio: periodo.inicio,
     fim: periodo.fim,
-    salao_unidade_id: String(id),
-  }), [periodo, id])
+  }), [periodo])
 
   const faturamento = useAvecData({ reportId: 1034, params })
   const atendimentos = useAvecData({ reportId: 2005, params })

@@ -43,8 +43,7 @@ export default function MetasPage() {
   const params = useMemo(() => ({
     inicio: periodo.inicio,
     fim: periodo.fim,
-    ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
-  }), [periodo, unidadeSelecionada])
+  }), [periodo])
 
   const faturamento = useAvecData({ reportId: 1034, params })
   const atendimentos = useAvecData({ reportId: 2005, params })

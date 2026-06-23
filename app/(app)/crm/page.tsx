@@ -15,14 +15,13 @@ const TABS = ['Base de Clientes', 'Novos Clientes', 'Retorno', 'Contatos', 'Dupl
 
 export default function CrmPage() {
   const { periodo } = usePeriodo()
-  const { unidadeSelecionada } = useUnidades()
+  useUnidades()
   const [activeTab, setActiveTab] = useState('Base de Clientes')
 
   const params = useMemo(() => ({
     inicio: periodo.inicio,
     fim: periodo.fim,
-    ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
-  }), [periodo, unidadeSelecionada])
+  }), [periodo])
 
   const baseClientes = useAvecData({ reportId: 2007, params })
   const novosClientes = useAvecData({ reportId: 2008, params })

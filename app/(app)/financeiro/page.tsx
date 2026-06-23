@@ -18,13 +18,12 @@ function formatBRL(v: number) {
 
 export default function FinanceiroPage() {
   const { periodo } = usePeriodo()
-  const { unidadeSelecionada } = useUnidades()
+  useUnidades()
 
   const params = useMemo(() => ({
     inicio: periodo.inicio,
     fim: periodo.fim,
-    ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
-  }), [periodo, unidadeSelecionada])
+  }), [periodo])
 
   const faturamento = useAvecData({ reportId: 1034, params })
   const despesas = useAvecData({ reportId: 1386, params })

@@ -14,13 +14,12 @@ import { Tag, Package, Star } from 'lucide-react'
 
 export default function PromocoesPage() {
   const { periodo } = usePeriodo()
-  const { unidadeSelecionada } = useUnidades()
+  useUnidades()
 
   const params = useMemo(() => ({
     inicio: periodo.inicio,
     fim: periodo.fim,
-    ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
-  }), [periodo, unidadeSelecionada])
+  }), [periodo])
 
   const taxaAdesao = useAvecData({ reportId: 1046, params })
   const pacotesUtilizados = useAvecData({ reportId: 1064, params })

@@ -23,13 +23,12 @@ function ChartSkeleton() {
 
 export default function EvolucaoPage() {
   const { periodo } = usePeriodo()
-  const { unidadeSelecionada } = useUnidades()
+  useUnidades()
 
   const params = useMemo(() => ({
     inicio: periodo.inicio,
     fim: periodo.fim,
-    ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
-  }), [periodo, unidadeSelecionada])
+  }), [periodo])
 
   const crescimentoParams = useMemo(() => {
     const [, mesStr, anoStr] = periodo.inicio.split('/')
@@ -44,9 +43,8 @@ export default function EvolucaoPage() {
       fim1: `${String(lastDayPrev).padStart(2, '0')}/${String(prevMes).padStart(2, '0')}/${prevAno}`,
       inicio2: periodo.inicio,
       fim2: periodo.fim,
-      ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
     }
-  }, [periodo, unidadeSelecionada])
+  }, [periodo])
 
   const crescimentoUnidade = useAvecData({ reportId: 2011, params: crescimentoParams })
   const taxaAtivPeriodo = useAvecData({ reportId: 2003, params })

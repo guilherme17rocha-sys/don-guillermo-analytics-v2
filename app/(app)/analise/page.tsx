@@ -17,14 +17,13 @@ const TABS = ['Serviços', 'Procedimentos', 'Produtos', 'Comandas']
 
 export default function AnalisePage() {
   const { periodo } = usePeriodo()
-  const { unidadeSelecionada } = useUnidades()
+  useUnidades()
   const [activeTab, setActiveTab] = useState('Serviços')
 
   const params = useMemo(() => ({
     inicio: periodo.inicio,
     fim: periodo.fim,
-    ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
-  }), [periodo, unidadeSelecionada])
+  }), [periodo])
 
   const servicos = useAvecData({ reportId: 1031, params, enabled: activeTab === 'Serviços' })
   const faturCat = useAvecData({ reportId: 1034, params, enabled: activeTab === 'Serviços' })
