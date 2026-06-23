@@ -10,7 +10,7 @@ import { BarChart } from '@/components/charts/BarChart'
 import { useAvecData } from '@/hooks/useAvecData'
 import { usePeriodo } from '@/hooks/usePeriodo'
 import { useUnidades } from '@/hooks/useUnidades'
-import { DollarSign, Users, TrendingUp, UserPlus, RotateCcw } from 'lucide-react'
+import { DollarSign, Users, TrendingUp, RotateCcw } from 'lucide-react'
 
 function formatBRL(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0)
@@ -23,7 +23,7 @@ export default function DashboardPage() {
   const params = useMemo(() => ({
     inicio: periodo.inicio,
     fim: periodo.fim,
-    ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
+    salao_unidade_id: unidadeSelecionada !== 'all' ? unidadeSelecionada : '23060',
   }), [periodo, unidadeSelecionada])
 
   const crescimentoParams = useMemo(() => {
@@ -39,14 +39,12 @@ export default function DashboardPage() {
       fim1: `${String(lastDayPrev).padStart(2, '0')}/${String(prevMes).padStart(2, '0')}/${prevAno}`,
       inicio2: periodo.inicio,
       fim2: periodo.fim,
-      ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
+      salao_unidade_id: unidadeSelecionada !== 'all' ? unidadeSelecionada : '23060',
     }
   }, [periodo, unidadeSelecionada])
 
   const faturamento = useAvecData({ reportId: 1034, params })
   const atendimentos = useAvecData({ reportId: 2005, params })
-  const ticketMedio = useAvecData({ reportId: 1010, params })
-  const novosClientes = useAvecData({ reportId: 2008, params })
   const retorno = useAvecData({ reportId: 1035, params })
   const crescimento = useAvecData({ reportId: 2011, params: crescimentoParams })
 
@@ -58,21 +56,16 @@ export default function DashboardPage() {
     atendimentos.data.reduce((s, r) => s + (parseInt(r.total || r.atendimentos || r.quantidade || 0)), 0),
     [atendimentos.data])
 
-  const avgTicket = useMemo(() => {
-    if (!ticketMedio.data.length) return 0
-    const vals = ticketMedio.data.map(r => parseFloat(r.ticket_medio || r.valor || 0)).filter(Boolean)
-    return vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : 0
-  }, [ticketMedio.data])
-
-  const totalNovos = useMemo(() =>
-    novosClientes.data.reduce((s, r) => s + parseInt(r.total || r.quantidade || 0), 0),
-    [novosClientes.data])
-
   const taxaRetorno = useMemo(() => {
     if (!retorno.data.length) return 0
     const vals = retorno.data.map(r => parseFloat(r.percentual_retorno || r.percentual || r.taxa || 0)).filter(Boolean)
     return vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : 0
   }, [retorno.data])
+
+  const avgTicket = useMemo(() => {
+    if (totalAtendimentos === 0) return 0
+    return totalFaturamento / totalAtendimentos
+  }, [totalFaturamento, totalAtendimentos])
 
   const pieData = useMemo(() =>
     faturamento.data.slice(0, 8).map(r => ({
@@ -98,7 +91,7 @@ export default function DashboardPage() {
     return Object.values(map)
   }, [crescimento.data])
 
-  const anyError = faturamento.error || atendimentos.error || ticketMedio.error
+  const anyError = faturamento.error || atendimentos.error
 
   return (
     <div className="flex flex-col h-full">
@@ -108,7 +101,7 @@ export default function DashboardPage() {
         {anyError && <ErrorMessage message={anyError} onRetry={() => { faturamento.refetch(); atendimentos.refetch() }} />}
 
         {/* Métricas */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <MetricCard
             title="Faturamento Total"
             value={formatBRL(totalFaturamento)}
@@ -128,14 +121,7 @@ export default function DashboardPage() {
             value={formatBRL(avgTicket)}
             icon={TrendingUp}
             color="green"
-            loading={ticketMedio.loading}
-          />
-          <MetricCard
-            title="Novos Clientes"
-            value={totalNovos.toLocaleString('pt-BR')}
-            icon={UserPlus}
-            color="purple"
-            loading={novosClientes.loading}
+            loading={faturamento.loading || atendimentos.loading}
           />
           <MetricCard
             title="Taxa de Retorno"
@@ -162,7 +148,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="bg-white border border-zinc-200 rounded-xl p-5">
-            <h3 className="font-semibold text-zinc-800 mb-4">Faturamento por Unidade</h3>
+            <h3 className="font-semibold text-zinc-800 mb-4">Crescimento de Faturamento</h3>
             {crescimento.loading ? (
               <div className="h-64 bg-zinc-50 animate-pulse rounded-lg flex items-center justify-center">
                 <p className="text-zinc-400 text-sm">Carregando...</p>
