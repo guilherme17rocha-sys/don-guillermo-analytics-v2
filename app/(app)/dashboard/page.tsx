@@ -26,12 +26,29 @@ export default function DashboardPage() {
     ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
   }), [periodo, unidadeSelecionada])
 
+  const crescimentoParams = useMemo(() => {
+    const [, mesStr, anoStr] = periodo.inicio.split('/')
+    const mes = parseInt(mesStr, 10)
+    const ano = parseInt(anoStr, 10)
+    const prevMes = mes === 1 ? 12 : mes - 1
+    const prevAno = mes === 1 ? ano - 1 : ano
+    const lastDayPrev = new Date(ano, mes - 1, 0).getDate()
+
+    return {
+      inicio1: `01/${String(prevMes).padStart(2, '0')}/${prevAno}`,
+      fim1: `${String(lastDayPrev).padStart(2, '0')}/${String(prevMes).padStart(2, '0')}/${prevAno}`,
+      inicio2: periodo.inicio,
+      fim2: periodo.fim,
+      ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
+    }
+  }, [periodo, unidadeSelecionada])
+
   const faturamento = useAvecData({ reportId: 1034, params })
   const atendimentos = useAvecData({ reportId: 2005, params })
   const ticketMedio = useAvecData({ reportId: 1010, params })
   const novosClientes = useAvecData({ reportId: 2008, params })
   const retorno = useAvecData({ reportId: 1035, params })
-  const crescimento = useAvecData({ reportId: 2011, params })
+  const crescimento = useAvecData({ reportId: 2011, params: crescimentoParams })
 
   const totalFaturamento = useMemo(() =>
     faturamento.data.reduce((s, r) => s + (parseFloat(r.valor || r.total || r.faturamento || 0)), 0),

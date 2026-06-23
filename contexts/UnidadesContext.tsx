@@ -6,6 +6,8 @@ import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 
+const AVEC_BASE_URL = 'https://api.avec.beauty/reports/'
+
 interface UnidadesContextValue {
   unidades: UnidadeOption[]
   unidadeSelecionada: string
@@ -34,21 +36,63 @@ export function UnidadesProvider({ children }: { children: ReactNode }) {
           return
         }
 
+        let lista: UnidadeOption[] = []
+
         const res = await fetch('/api/avec/unidades', {
           headers: { Authorization: token },
         })
-        console.log(`[Unidades] Resposta: ${res.status}`)
-        if (!res.ok) return
-        const json = await res.json()
-        let lista: UnidadeOption[] = json.data || []
+        console.log(`[Unidades] 2052 resposta: ${res.status}`)
+
+        if (res.ok) {
+          const json = await res.json()
+          lista = json.data || []
+        }
+
+        if (lista.length === 0) {
+          console.log('[Unidades] 2052 falhou ou vazio, tentando descobrir unidade via 2005...')
+          try {
+            const now = new Date()
+            const inicio = `01/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`
+            const fim = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`
+            const fallbackUrl = `${AVEC_BASE_URL}2005?inicio=${inicio}&fim=${fim}&page=1&limit=1`
+            console.log(`[Unidades] Fallback 2005 → ${fallbackUrl}`)
+            const fallbackRes = await fetch(fallbackUrl, {
+              headers: { Authorization: token, 'Content-Type': 'application/json' },
+            })
+            if (fallbackRes.ok) {
+              const fallbackJson = await fallbackRes.json()
+              const record = fallbackJson?.Data?.Result?.[0]
+              if (record) {
+                const id = String(record.salao_id || record.salao_unidade_id || record.id || record.unidade_id || '')
+                const nome = record.salao || record.unidade || record.nome || 'Unidade SBC'
+                console.log(`[Unidades] Unidade descoberta via 2005: id=${id}, nome=${nome}`)
+                if (id) {
+                  lista = [{ id, nome }]
+                }
+              }
+            }
+          } catch (err: any) {
+            console.warn('[Unidades] Fallback 2005 também falhou:', err.message)
+          }
+        }
+
+        if (lista.length === 0) {
+          console.log('[Unidades] Usando fallback padrão: Unidade SBC')
+          lista = [{ id: '', nome: 'Unidade SBC' }]
+        }
 
         if (profile!.role !== 'admin' && profile!.unidades?.length) {
           lista = lista.filter((u) => profile!.unidades.includes(u.id))
         }
 
         setUnidades(lista)
+
+        if (lista.length === 1 && lista[0].id) {
+          setUnidadeSelecionada(lista[0].id)
+        }
       } catch (err: any) {
         console.error('[Unidades] Erro ao carregar:', err.message)
+        setUnidades([{ id: '', nome: 'Unidade SBC' }])
       } finally {
         setLoading(false)
       }

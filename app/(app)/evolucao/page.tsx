@@ -31,7 +31,24 @@ export default function EvolucaoPage() {
     ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
   }), [periodo, unidadeSelecionada])
 
-  const crescimentoUnidade = useAvecData({ reportId: 2011, params })
+  const crescimentoParams = useMemo(() => {
+    const [, mesStr, anoStr] = periodo.inicio.split('/')
+    const mes = parseInt(mesStr, 10)
+    const ano = parseInt(anoStr, 10)
+    const prevMes = mes === 1 ? 12 : mes - 1
+    const prevAno = mes === 1 ? ano - 1 : ano
+    const lastDayPrev = new Date(ano, mes - 1, 0).getDate()
+
+    return {
+      inicio1: `01/${String(prevMes).padStart(2, '0')}/${prevAno}`,
+      fim1: `${String(lastDayPrev).padStart(2, '0')}/${String(prevMes).padStart(2, '0')}/${prevAno}`,
+      inicio2: periodo.inicio,
+      fim2: periodo.fim,
+      ...(unidadeSelecionada !== 'all' ? { salao_unidade_id: unidadeSelecionada } : {}),
+    }
+  }, [periodo, unidadeSelecionada])
+
+  const crescimentoUnidade = useAvecData({ reportId: 2011, params: crescimentoParams })
   const taxaAtivPeriodo = useAvecData({ reportId: 2003, params })
   const taxaAtivGeral = useAvecData({ reportId: 2004, params })
   const retornoGeral = useAvecData({ reportId: 1035, params })

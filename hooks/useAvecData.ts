@@ -33,7 +33,8 @@ export function useAvecData<T = any>({ reportId, params, enabled = true }: UseAv
   const [error, setError] = useState<string | null>(null)
 
   const doFetch = useCallback(async () => {
-    if (!enabled || !params.inicio || !params.fim) return
+    const hasDateParams = (params.inicio && params.fim) || (params.inicio1 && params.fim1)
+    if (!enabled || !hasDateParams) return
 
     setLoading(true)
     setError(null)
