@@ -3,6 +3,8 @@
 import { createContext, useState, useEffect, ReactNode } from 'react'
 import { UnidadeOption } from '@/types/app'
 import { useAuth } from '@/hooks/useAuth'
+import { db } from '@/lib/firebase'
+import { doc, getDoc } from 'firebase/firestore'
 
 interface UnidadesContextValue {
   unidades: UnidadeOption[]
@@ -25,7 +27,17 @@ export function UnidadesProvider({ children }: { children: ReactNode }) {
     async function load() {
       setLoading(true)
       try {
-        const res = await fetch('/api/avec/unidades')
+        const snap = await getDoc(doc(db, 'settings', 'global'))
+        const token = snap.exists() ? snap.data().token_avec : null
+        if (!token) {
+          console.warn('[Unidades] Token AVEC não configurado')
+          return
+        }
+
+        const res = await fetch('/api/avec/unidades', {
+          headers: { Authorization: token },
+        })
+        console.log(`[Unidades] Resposta: ${res.status}`)
         if (!res.ok) return
         const json = await res.json()
         let lista: UnidadeOption[] = json.data || []
@@ -35,8 +47,8 @@ export function UnidadesProvider({ children }: { children: ReactNode }) {
         }
 
         setUnidades(lista)
-      } catch {
-        // silently fail
+      } catch (err: any) {
+        console.error('[Unidades] Erro ao carregar:', err.message)
       } finally {
         setLoading(false)
       }

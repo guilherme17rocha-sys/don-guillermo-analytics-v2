@@ -43,15 +43,17 @@ async function fetchPage(
   reportId: number,
   params: AvecParams
 ): Promise<AvecReportResponse> {
-  const url = new URL(`${BASE_URL}${reportId}`)
-
+  const queryParts: string[] = []
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
-      url.searchParams.set(key, String(value))
+      queryParts.push(`${key}=${String(value)}`)
     }
   })
+  const fullUrl = `${BASE_URL}${reportId}${queryParts.length ? '?' + queryParts.join('&') : ''}`
 
-  const res = await fetch(url.toString(), {
+  console.log(`[AVEC API] Endpoint ${reportId} → ${fullUrl}`)
+
+  const res = await fetch(fullUrl, {
     headers: {
       Authorization: token,
       'Content-Type': 'application/json',
@@ -63,6 +65,8 @@ async function fetchPage(
   }
 
   if (!res.ok) {
+    const errorBody = await res.text()
+    console.error(`[AVEC API] Endpoint ${reportId} erro ${res.status}: ${errorBody}`)
     throw new Error(`Erro na API AVEC (${res.status}): ${res.statusText}`)
   }
 

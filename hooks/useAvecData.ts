@@ -39,8 +39,10 @@ export function useAvecData<T = any>({ reportId, params, enabled = true }: UseAv
     setError(null)
 
     try {
+      console.log(`[useAvecData] Buscando endpoint ${reportId} com params:`, params)
       const token = await getTokenClientSide()
       const results = await fetchReport(reportId, params, token)
+      console.log(`[useAvecData] Endpoint ${reportId} retornou ${results?.length || 0} resultado(s)`)
       setData((results || []) as T[])
     } catch (err: any) {
       setError(err.message)
